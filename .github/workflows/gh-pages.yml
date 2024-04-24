@@ -5,43 +5,18 @@ on:
     branches:
       - main
 
-env:
-  PUBLISH_BRANCH: gh-pages
-  PUBLISH_DIR: public
-
 jobs:
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Copy public folder
-      run: cp -r ${{ env.PUBLISH_DIR }} ${GITHUB_WORKSPACE}
-
-    - name: Configure Git
-      run: |
-        git config user.name "${GITHUB_ACTOR}"
-        git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-        
   deploy:
-    needs: build
     runs-on: ubuntu-latest
-
     steps:
-    
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        publish_branch: ${{ env.PUBLISH_BRANCH }}
-        publish_dir: ${GITHUB_WORKSPACE}/${{ env.PUBLISH_DIR }}
-        force_orphan: true
-        
-    - name: Remove public folder
-      run: rm -rf ${GITHUB_WORKSPACE}/${{ env.PUBLISH_DIR }}
+      - uses: actions/checkout
 
+      - name: Setup Pages
+        uses: actions/configure-pages
+
+      - name: Deploy to GitHub Pages  
+        uses: peaceiris/actions-gh-pages
+        with:
+          deploy_key: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./public
