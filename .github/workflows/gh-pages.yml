@@ -1,0 +1,28 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Replace 'main' with the branch you want to deploy from
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy contents of public folder
+        run: cp -r public/* $GITHUB_WORKSPACE
+
+      - name: Build and deploy
+        run: |
+          git config --global user.email "jpotin@gmail.com"
+          git config --global user.name "joska"
+          git init
+          git add .
+          git commit -m "Deploy to GitHub Pages"
+          git push --force --quiet "https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" master:gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
